@@ -7,6 +7,6 @@ A very simple test application for clinical NLP based on DIPS EHR Notes ASK serv
 
 [source]
 ----
-docker build -t my-apache2 .
-docker run -dit --name my-running-app -p 7890:80 my-apache2
+docker build -t ask-ui .
+docker run -dit --name ask-ui-app -p 7890:80 ask-ui
 ---- 
