@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+
+    <title>Test EHR Notes ASK</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Clinical NLP Test Application</h1>
+      <div id="corpus_div">
+        <div class="form-group">
+          <label for="corpus">"Journalnotat"</label>
+          <textarea
+            class="form-control"
+            id="corpus"
+            rows="3"
+            placeholder="Skriv inn journalteksten her"
+          ></textarea>
+        </div>
+      </div>
+
+      <!--
+        <button type="button" class="btn btn-primary" onclick="loadDoc()">
+        Apply NLP
+      </button>
+    -->
+
+      <div class="card">
+        <div class="card-body" id="nlp_result">
+          <i>Her kommer NLP resultatet</i>
+        </div>
+      </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      (() => {
+        const textArea = document.getElementById("corpus");
+        textArea.addEventListener("input", () => {
+          let t = textArea.value;
+          if (t.length > 0) {
+            let n = t.length;
+            let char = t[n - 1];
+            //console.log("Char -> " + char);
+            if (" " === char) {
+              loadDoc();
+            }
+          }
+          let textLn = textArea.value.length;
+          if (textLn >= 100) {
+            textArea.style.fontSize = "10pt";
+          }
+        });
+      })();
+      var url = "http://vp-ala04:8888/entview";
+      // url = "http://localhost:8000/entview";
+      function loadDoc() {
+        console.log("Loading doc");
+        var xmlhttp = new XMLHttpRequest();
+
+        var corpus = document.getElementById("corpus").value;
+        var content = { corpus: corpus };
+
+        xmlhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            console.log("Got response");
+            console.log(this.response);
+            var myArr = JSON.parse(this.responseText);
+            myFunction(this.response);
+          }
+        };
+        xmlhttp.open("POST", url, true);
+        xmlhttp.send(JSON.stringify(content));
+      }
+
+      function myFunction(arr) {
+        var data = JSON.parse(arr);
+        document.getElementById("nlp_result").innerHTML = data.data;
+      }
+    </script>
+  </body>
+</html>
