@@ -44,6 +44,39 @@
           <i>Her kommer NLP resultatet</i>
         </div>
       </div>
+      <hr />
+      <div>
+        <p class="lead">
+          This is a lightweight UI prototyping a NLP powered texteditor for
+          clinical notes.
+        </p>
+        <p>
+          The NLP engine is exposed as a webservice (REST) implemented using
+          <a href="https://spacy.io/">spaCy</a>. The NLP engine is prepared with
+          NER to extract natural entities from the text corpus.
+        </p>
+        <p>
+          The NLP engine is trained with health ontologies found in this open
+          repo_
+          <a href="https://github.com/bjornna/healthontologies"
+            >github.com/bjornna/healthontologies</a
+          >
+        </p>
+        <ul>
+          <li>Anatomy based on subset of SNOMED-CT</li>
+          <li>Laterality using SNOMED-CT to define left and right</li>
+          <li>ICNP terminology based on PDF document</li>
+          <li>Medication list prepared by clinician</li>
+          <li>Some OBSERVATIONS related to Vital Signs</li>
+        </ul>
+        <p>Based on the above you can try sentences like:</p>
+        <ul>
+          <li>Pasienten har smerter i venstre skulder.</li>
+          <li>BP: 120/80 mmHg</li>
+          <li>Bruker paracetamol mot smerter.</li>
+          <li>Temp: 38 C</li>
+        </ul>
+      </div>
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
