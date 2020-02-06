@@ -6,7 +6,8 @@ var app = new Vue({
             counter: 0,
             status: [],
             corpus: null,
-            host: "http://localhost:8000/entview", // "https://ehrnotes-ask.azurewebsites.net/entview"
+            //host: "http://localhost:8000/entview",
+            host: "https://ehrnotes-ask.azurewebsites.net/entview",
             loading: false,
             errored: false,
             show_tip: false
