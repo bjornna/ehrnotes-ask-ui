@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="nb">
   <head>
+    <title>Test EHR Notes</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"
+      integrity="sha256-bd8XIKzrtyJ1O5Sh3Xp3GiuMIzWC42ZekvrMMD4GxRg="
+      crossorigin="anonymous"
+    ></script>
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -15,22 +21,39 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
-
-    <title>Test EHR Notes ASK</title>
   </head>
   <body>
-    <div class="container">
+    <div class="container" id="app">
       <h1>Clinical NLP Test Application</h1>
-      <div id="corpus_div">
-        <div class="form-group">
-          <label for="corpus">"Journalnotat"</label>
-          <textarea
-            class="form-control"
-            id="corpus"
-            rows="3"
-            placeholder="Skriv inn journalteksten her"
-          ></textarea>
+      <div class="form-group">
+        <label for="corpus">Notat</label>
+        <textarea
+          id="corpus"
+          class="form-control"
+          v-model="corpus"
+          v-on:keyup.space="nlp"
+          placeholder="Skriv inn journalnotatet her"
+          rows="3"
+        ></textarea>
+      </div>
+      <div class="card">
+        <div class="card-body" id="nlp_result">
+          <span v-html="info"></span>
         </div>
+      </div>
+      <div v-if="loading">
+        {{status}}
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          v-model="show_tip"
+          id="show_tip_check"
+        />
+        <label class="form-check-label" for="show_tip_check">
+          Show info about app
+        </label>
       </div>
 
       <!--
@@ -39,45 +62,42 @@
       </button>
     -->
 
-      <div class="card">
-        <div class="card-body" id="nlp_result">
-          <i>Her kommer NLP resultatet</i>
+      <div claass="card" v-if="show_tip">
+        <div>
+          <p class="lead">
+            This is a lightweight UI prototyping a NLP powered texteditor for
+            clinical notes.
+          </p>
+          <p>
+            The NLP engine is exposed as a webservice (REST) implemented using
+            <a href="https://spacy.io/">spaCy</a>. The NLP engine is prepared
+            with NER to extract natural entities from the text corpus.
+          </p>
+          <p>
+            The NLP engine is trained with health ontologies found in this open
+            repo_
+            <a href="https://github.com/bjornna/healthontologies"
+              >github.com/bjornna/healthontologies</a
+            >
+          </p>
+          <ul>
+            <li>Anatomy based on subset of SNOMED-CT</li>
+            <li>Laterality using SNOMED-CT to define left and right</li>
+            <li>ICNP terminology based on PDF document</li>
+            <li>Medication list prepared by clinician</li>
+            <li>Some OBSERVATIONS related to Vital Signs</li>
+          </ul>
+          <p>Based on the above you can try sentences like:</p>
+          <ul>
+            <li>Pasienten har smerter i venstre skulder.</li>
+            <li>BP: 120/80 mmHg</li>
+            <li>Bruker paracetamol mot smerter.</li>
+            <li>Temp: 38 C</li>
+          </ul>
         </div>
       </div>
-      <hr />
-      <div>
-        <p class="lead">
-          This is a lightweight UI prototyping a NLP powered texteditor for
-          clinical notes.
-        </p>
-        <p>
-          The NLP engine is exposed as a webservice (REST) implemented using
-          <a href="https://spacy.io/">spaCy</a>. The NLP engine is prepared with
-          NER to extract natural entities from the text corpus.
-        </p>
-        <p>
-          The NLP engine is trained with health ontologies found in this open
-          repo_
-          <a href="https://github.com/bjornna/healthontologies"
-            >github.com/bjornna/healthontologies</a
-          >
-        </p>
-        <ul>
-          <li>Anatomy based on subset of SNOMED-CT</li>
-          <li>Laterality using SNOMED-CT to define left and right</li>
-          <li>ICNP terminology based on PDF document</li>
-          <li>Medication list prepared by clinician</li>
-          <li>Some OBSERVATIONS related to Vital Signs</li>
-        </ul>
-        <p>Based on the above you can try sentences like:</p>
-        <ul>
-          <li>Pasienten har smerter i venstre skulder.</li>
-          <li>BP: 120/80 mmHg</li>
-          <li>Bruker paracetamol mot smerter.</li>
-          <li>Temp: 38 C</li>
-        </ul>
-      </div>
     </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
@@ -95,50 +115,6 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
-    <script>
-      (() => {
-        const textArea = document.getElementById("corpus");
-        textArea.addEventListener("input", () => {
-          let t = textArea.value;
-          if (t.length > 0) {
-            let n = t.length;
-            let char = t[n - 1];
-            //console.log("Char -> " + char);
-            if (" " === char) {
-              loadDoc();
-            }
-          }
-          let textLn = textArea.value.length;
-          if (textLn >= 100) {
-            textArea.style.fontSize = "10pt";
-          }
-        });
-      })();
-      var url = "https://ehrnotes-ask.azurewebsites.net/entview";
-      // url = "http://localhost:8000/entview";
-      function loadDoc() {
-        console.log("Loading doc");
-        var xmlhttp = new XMLHttpRequest();
-
-        var corpus = document.getElementById("corpus").value;
-        var content = { corpus: corpus };
-
-        xmlhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
-            console.log("Got response");
-            console.log(this.response);
-            var myArr = JSON.parse(this.responseText);
-            myFunction(this.response);
-          }
-        };
-        xmlhttp.open("POST", url, true);
-        xmlhttp.send(JSON.stringify(content));
-      }
-
-      function myFunction(arr) {
-        var data = JSON.parse(arr);
-        document.getElementById("nlp_result").innerHTML = data.data;
-      }
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
