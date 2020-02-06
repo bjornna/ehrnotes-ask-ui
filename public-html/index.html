@@ -21,29 +21,45 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://bootswatch.com/4/sketchy/bootstrap.min.css"
+    />
   </head>
   <body>
     <div class="container" id="app">
       <h1>Clinical NLP Test Application</h1>
+
       <div class="form-group">
         <label for="corpus">Notat</label>
         <textarea
           id="corpus"
           class="form-control"
           v-model="corpus"
-          v-on:keyup.space="nlp"
           placeholder="Skriv inn journalnotatet her"
           rows="3"
         ></textarea>
       </div>
+      <div class="form-group">
+        <button type="button" class="btn btn-success" v-on:click="doNLP">
+          Apply NLP
+        </button>
+      </div>
+
       <div class="card">
         <div class="card-body" id="nlp_result">
           <span v-html="info"></span>
         </div>
       </div>
-      <div v-if="loading">
+      <div v-if="debug">
         {{status}}
       </div>
+      <div v-if="debug">
+        <span>
+          {{debouncedInput}}
+        </span>
+      </div>
+
       <div class="form-check">
         <input
           class="form-check-input"
@@ -56,10 +72,20 @@
         </label>
       </div>
 
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          v-model="debug"
+          id="debug_check"
+        />
+        <label class="form-check-label" for="debug_check">
+          Show debug info
+        </label>
+      </div>
+
       <!--
-        <button type="button" class="btn btn-primary" onclick="loadDoc()">
-        Apply NLP
-      </button>
+      
     -->
 
       <div claass="card" v-if="show_tip">
@@ -115,6 +141,7 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+    <script src="helpers.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
