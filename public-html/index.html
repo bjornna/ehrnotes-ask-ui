@@ -45,6 +45,7 @@
           class="form-control"
           v-model="corpus"
           placeholder="Skriv inn journalnotatet her"
+          oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'
           rows="3"
         ></textarea>
       </div>
