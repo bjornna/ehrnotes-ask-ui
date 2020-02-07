@@ -29,6 +29,14 @@
   <body>
     <div class="container" id="app">
       <h1>Clinical NLP Test Application</h1>
+      <p class="small">
+        Using NLP service at
+        <select v-model="host">
+          <option disabled value="">Please select one</option>
+          <option>https://ehrnotes-ask.azurewebsites.net</option>
+          <option>http://localhost:8000</option>
+        </select>
+      </p>
 
       <div class="form-group">
         <label for="corpus">Notat</label>
@@ -53,6 +61,9 @@
       </div>
       <div v-if="debug">
         {{status}}
+        <button v-on:click="clearStatus" class="btn btn-outline-primary">
+          Clear status
+        </button>
       </div>
       <div v-if="debug">
         <span>
@@ -87,12 +98,17 @@
       <!--
       
     -->
+      <div class="card" v-if="debug"></div>
 
-      <div claass="card" v-if="show_tip">
+      <div class="card" v-if="show_tip">
         <div>
           <p class="lead">
             This is a lightweight UI prototyping a NLP powered texteditor for
             clinical notes.
+          </p>
+          <p>
+            The REST API documentation is located here:
+            <a v-bind:href="hostdoc">{{hostdoc}}</a>
           </p>
           <p>
             The NLP engine is exposed as a webservice (REST) implemented using

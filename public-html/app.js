@@ -9,12 +9,18 @@ var app = new Vue({
             status: [],
             corpus: null,
             //host: "http://localhost:8000/entview",
-            host: "https://ehrnotes-ask.azurewebsites.net/entview",
+            host: "https://ehrnotes-ask.azurewebsites.net",
+
             debug: false,
             loading: false,
             errored: false,
             show_tip: false
         };
+    },
+    computed: {
+        hostdoc: function () {
+            return this.host + "/docs";
+        }
     },
     watch: {
 
@@ -24,6 +30,9 @@ var app = new Vue({
         },1000)
     },
     methods: {
+        clearStatus: function () {
+            this.status = [];
+        },
         doNLP: function () {
             this.nlp(this.corpus,null);
         },
@@ -37,7 +46,7 @@ var app = new Vue({
             self.loading = true;
             self.update_status("NLP inveoked");
             axios
-                .post(self.host,{
+                .post(self.host + "/entview",{
                     corpus: message
                 })
                 .then(function (response) {
