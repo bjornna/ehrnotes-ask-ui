@@ -8,6 +8,7 @@ var app = new Vue({
             debouncedInput: null,
             status: [],
             corpus: null,
+            ent: null,
             //host: "http://localhost:8000/entview",
             host: "https://ehrnotes-ask.azurewebsites.net",
 
@@ -26,7 +27,7 @@ var app = new Vue({
 
         corpus: debounce(function (newVal) {
             this.debouncedInput = newVal;
-            this.nlp(this.corpus,null);
+            this.doNLP(this.corpus,null);
         },1000)
     },
     methods: {
@@ -35,11 +36,32 @@ var app = new Vue({
         },
         doNLP: function () {
             this.nlp(this.corpus,null);
+            this.getEnt(this.corpus,null);
         },
         update_status: function (message) {
-
             console.log("NEW STATUS -> " + message);
             this.status.push(message);
+        },
+        getEnt: function (message,event) {
+            self = this;
+            self.loading = true;
+            axios.post(self.host + "/ent",{
+                corpus: message
+            })
+                .then(function (response) {
+                    self.update_status("Got ENT response");
+                    if (response && response.data) {
+                        self.ent = response.data;
+                        console.log(response);
+
+                    }
+
+                }).catch(function (error) {
+                    console.log(error);
+
+                }).finally(function () {
+                    console.log("Finished loading DEP");
+                })
         },
         nlp: function (message,event) {
             self = this;

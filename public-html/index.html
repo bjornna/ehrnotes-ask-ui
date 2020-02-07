@@ -54,9 +54,20 @@
         </button>
       </div>
 
-      <div class="card">
+      <div class="card" v-if="info">
+        <div class="card-header">Visuell visning av funn</div>
         <div class="card-body" id="nlp_result">
           <span v-html="info"></span>
+        </div>
+      </div>
+      <div class="card" v-if="ent">
+        <div class="card-header">Entities</div>
+        <div class="card-body">
+          <ul id="example-1">
+            <li v-for="item in ent">
+              {{ item.label }} {{item.id}} {{item.text}}
+            </li>
+          </ul>
         </div>
       </div>
       <div v-if="debug">
